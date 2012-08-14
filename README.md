@@ -1,14 +1,16 @@
-Building a kernel 3.x for the OLinuXino:
+Building a kernel for the OLinuXino:
 ===
 
-*Software requirements  
-You need to have cross compiler and git installed. On Debian distributions install as:
+Software requirements  
+-Cross compiler and git. 
+
+On Debian distributions install as:
  
 $: sudo apt-get install gcc-arm-linux-gnueabi   
 $: sudo apt-get install git
 
-*Hardware requirements
-SD card with two partition, 1st boot and second rootfs partition. 
+-Hardware requirements
+SD card with two partition, 1st for boot and second for rootfs. See section 3. and 4.  
 
 Getting the code:  
 --- 
@@ -39,8 +41,8 @@ Change into directory kernel and download kernel sources:
 $: cd imx23-olinuxino/kernel  
 $: git clone -b patches-3.6-rc1 git://github.com/Freescale/linux-mainline.git   
 ```
-Inside new created directory linux-mainline are files from patches-3.6-rc1 branch.  
-Change into directory linux-mainline to  apply usb.patch.  
+Inside new created directory linux-mainline are files representing patches-3.6-rc1 branch.  
+Change into directory linux-mainline to apply patch.  
 ```
 $: cd linux-mainline  
 $: patch -p1 < ../usb.patch  
@@ -140,19 +142,17 @@ $: sudo dd if=sd_mmc_bootstream.raw of=/dev/sdb1
 ```
 Card is ready.  
 
-*Tip 1:  
 Is good practice to work with multiple consoles. Open one into directory linux-mainline,  
 second into imx-bootlets-src-10.05.02 and third console for minicom to monitor olinuxino.  
 
-*Tip 2:  
 If olinuxino failing to boot with the error:  
 ```
 Undefined Instruction 
 r14_unHTLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLFC   
 ```
 Probably your toolchain does not support cpu arm926ej-s. Download sources and   
-compile --with-arch=armv5te --with-tune=arm926ej-s. Second option is to download  
-binaries arm-none-eabi:  
+compile --with-arch=armv5te --with-tune=arm926ej-s. If you prefer ready made binaries,  
+download arm-none-eabi toolchain. It is proven to work with arm926ej-s.  
 
 Add PPA in your system:  
 ```
@@ -169,6 +169,8 @@ sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi \
 newlib-arm-none-eabi \
 gdb-arm-none-eabi
 ```
+Instead of CROSS_COMPILE=arm-linux-gnueabi- write CROSS_COMPILE=arm-none-eabi-  
+and follow instructions in section 1.) and 2.).
 
 3.) Make bootable SD-Card  
 ===
@@ -215,27 +217,9 @@ $: sudo fdisk /dev/sdb
       o Press 'w' to write  the partitions to the card and exit the fdisk  
 
 
-Createting the SD raw partition image   
+4.) Installing rootfs   
 ---
-
-Create and fill with zeros the image file sd_mmc_bootstream.raw with 4  
-blocks of 512 byes each:  
-
-$: dd if=/dev/zero of=sd_mmc_bootstream.raw bs=512 count=4  
-
-Append the boot stream file imx23_linux.sb to the file sd_mmc_bootstream.raw  
-
-$: dd if=./imx23_linux.sb of=sd_mmc_bootstream.raw ibs=512 seek=4 conv=sync,notrunc  
-
-Write the file to the boot partition on the 1st partition /dev/sdb1:  
-
-$: sudo dd if=sd_mmc_bootstream.raw of=/dev/sdb1  
-
-Installing rootfs   
----
-For now, rootfs is not populated. 
-
-Format the second partition on the SD card:  
+In this example SD disk is recognized as /dev/sdb. Format the second partition on the SD card:  
 
 $: sudo mkfs.ext3 /dev/sdb2  
 
@@ -249,7 +233,7 @@ $: sudo mount /dev/sdb2 /mnt/mmc
 
 Copy the rootfs to  mount point directory:  
 
-$: sudo cp -a ../../rootfs/* /mnt/mmc  
+$: sudo cp -a <path_to_your_rootfs>  /mnt/mmc  
 
 Unmount SD disk:  
 
