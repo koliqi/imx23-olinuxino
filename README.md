@@ -233,7 +233,7 @@ $: sudo mount /dev/sdb2 /mnt/mmc
 
 Copy the rootfs to  mount point directory:  
 
-$: sudo cp -a <path_to_your_rootfs>  /mnt/mmc  
+$: sudo cp -a `<path_to_your_rootfs> ` /mnt/mmc  
 
 Unmount SD disk:  
 
