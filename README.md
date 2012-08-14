@@ -9,7 +9,7 @@ On Debian distributions install as:
 $: sudo apt-get install gcc-arm-linux-gnueabi   
 $: sudo apt-get install git
 
--Hardware requirements
+-Hardware requirements  
 SD card with two partition, 1st for boot and second for rootfs. See section 3. and 4.  
 
 Getting the code:  
@@ -71,7 +71,7 @@ Save configuration and exit.
 
 Compile kernel  
 ```
-$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules
+$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules  
 ```
 Kernel is ready at arch/arm/boot/zImage.  
 
@@ -85,8 +85,8 @@ $: cat arch/arm/boot/zImage arch/arm/boot/imx23-olinuxino.dtb > arch/arm/boot/zI
 ```
 If you want to repet this procedure, start with clean-up:  
 ```
-$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- distclean
-$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- clean
+$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- distclean  
+$: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- clean  
 ```
 
 2.) Bootlets  
@@ -129,12 +129,12 @@ $: ln -s ../../kernel/linux-mainline/arch/arm/boot/zImage_dtb ./zImage
 
 Make boot stream file:  
 ```
-$: make CROSS_COMPILE=arm-linux-gnueabi-  clean
+$: make CROSS_COMPILE=arm-linux-gnueabi-  clean  
 $: make CROSS_COMPILE=arm-linux-gnueabi-  
 ```
 Final response would be:  
 ```
-To install bootstream onto SD/MMC card, type: sudo dd if=sd_mmc_bootstream.raw of=/dev/sdXY    where X is the correct letter for your sd or mmc device (to check, do a ls /dev/sd*) and Y is   the partition number for the bootstream  
+To install bootstream onto SD/MMC card, type: sudo dd if=sd_mmc_bootstream.raw of=/dev/sdXY     where X is the correct letter for your sd or mmc device (to check, do a ls /dev/sd*) and Y is   the partition number for the bootstream  
 ```
 In my system sd device is /dev/sdb1, so writing bootstream file in card is done by:  
 ```
@@ -163,14 +163,14 @@ Refresh list of software available, including the PPA you just added:
 $: sudo apt-get update  
 ```
 
-Install packages:
+Install packages:  
 ```
-sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi \
-newlib-arm-none-eabi \
-gdb-arm-none-eabi
+sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi \  
+newlib-arm-none-eabi \  
+gdb-arm-none-eabi  
 ```
 Instead of CROSS_COMPILE=arm-linux-gnueabi- write CROSS_COMPILE=arm-none-eabi-  
-and follow instructions in section 1.) and 2.).
+and follow instructions in section 1.) and 2.).  
 
 3.) Make bootable SD-Card  
 ===
