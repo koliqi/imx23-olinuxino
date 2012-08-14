@@ -10,17 +10,18 @@ $: sudo apt-get install gcc-arm-linux-gnueabi
 $: sudo apt-get install git
 
 -Hardware requirements  
-SD card with two partition, 1st for boot and second for rootfs. See section 3. and 4.  
+SD card with two partition, 1st for boot and second for rootfs. See section 3. and 4.
+for instructions for making the two partition SD card  
 
 Getting the code:  
 --- 
 ```  
 $: git clone https://github.com/koliqi/imx23-olinuxino  
 ```
-This package contain initial patches usb support with kernel linux-3.X,  
+This package contains patches that have initial usb support with kernel linux-3.X,  
 Freescale imx-bootlets, Freescale utility elftosb2 and patches for imx-bootlets.  
   
-Directory tree is as follow:  
+Directory tree is as follows:  
 
 imx23-olinuxino    
 ├── bootlets    
@@ -36,13 +37,13 @@ imx23-olinuxino
 1.) Building a kernel 3.x for the OLinuXino from sources  
 ===
 
-Change into directory kernel and download kernel sources:  
+Switch into directory kernel and download kernel sources:  
 ```
 $: cd imx23-olinuxino/kernel  
 $: git clone -b patches-3.6-rc1 git://github.com/Freescale/linux-mainline.git   
 ```
-Inside new created directory linux-mainline are files representing patches-3.6-rc1 branch.  
-Change into directory linux-mainline to apply patch.  
+Inside the new created directory linux-mainline, there are files representing patches-3.6-rc1 branch.  
+Switch into directory linux-mainline to apply patch.  
 ```
 $: cd linux-mainline  
 $: patch -p1 < ../usb.patch  
@@ -79,11 +80,11 @@ Kernel is ready at arch/arm/boot/zImage.
 ```
 $: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- imx23-olinuxino.dtb  
 ```
-Join zImage and imx23-olinuxino.dtb file in new file zImage_dtb:  
+Join zImage and imx23-olinuxino.dtb into a new file zImage_dtb:  
 ```
 $: cat arch/arm/boot/zImage arch/arm/boot/imx23-olinuxino.dtb > arch/arm/boot/zImage_dtb  
 ```
-If you want to repet this procedure, start with clean-up:  
+If you want to repeat this procedure, start with clean-up:  
 ```
 $: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- distclean  
 $: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- clean  
@@ -96,12 +97,12 @@ $: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- clean
 executing binary images in special format from different locations including   
 MMC/SD card and NAND flash."  *)  
 Binary image is called a boot stream (.bs). Boot stream consists of a series of   
-smaller bootable images (bootlets) and finaly with binary image of kernel. Linking   
-bootlets with kernel and converting from elf format to raw boot stream is done   
-with utility elftobs. In this package, utility elftobs2 is located in directory  
-elftosb-0.3.   
+smaller bootable images (bootlets) that when all together create the binary image  
+of the kernel. Linking bootlets with kernel and converting from elf format to raw  
+boot stream is done with utility elftobs. In this package, utility elftobs2 is   
+located in directory elftosb-0.3.   
 
-Change into directory elftosb-0.3 and make symbolic link into compilers default   
+Switch into directory elftosb-0.3 and make symbolic link into compilers default   
 PATH:   
 ```
 $: sudo ln -s `pwd`/elftosb2 /usr/sbin/      
@@ -112,11 +113,11 @@ $: locate elftosb2
 ```
 elftosb2 should be located at /usr/sbin/elftosb2.  
  
-Next, change into directory bootlets and untar archive imx-bootlets-src-10.05.02.tar.gz  
+Next, switch into directory bootlets and untar archive imx-bootlets-src-10.05.02.tar.gz  
 ```
 $: tar xvzf imx-bootlets-src-10.05.02.tar.gz  
 ```
-then change into directory imx-bootlets-src-10.05.02 and apply patches:  
+then go into directory imx-bootlets-src-10.05.02 and apply patches:  
 ```
 $: patch -p1 < ../imx23_olinuxino_bootlets.patch  
 ```
@@ -142,16 +143,16 @@ $: sudo dd if=sd_mmc_bootstream.raw of=/dev/sdb1
 ```
 Card is ready.  
 
-Is good practice to work with multiple consoles. Open one into directory linux-mainline,  
+It is good practice to work with multiple consoles. Open one into directory linux-mainline,  
 second into imx-bootlets-src-10.05.02 and third console for minicom to monitor olinuxino.  
 
-If olinuxino failing to boot with the error:  
+If olinuxino failing to boot because of the error:  
 ```
 Undefined Instruction 
 r14_unHTLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLFC   
 ```
 Probably your toolchain does not support cpu arm926ej-s. Download sources and   
-compile --with-arch=armv5te --with-tune=arm926ej-s. If you prefer ready made binaries,  
+compile --with-arch=armv5te --with-tune=arm926ej-s. If you prefer premade binaries,  
 download arm-none-eabi toolchain. It is proven to work with arm926ej-s.  
 
 Add PPA in your system:  
@@ -177,7 +178,7 @@ and follow instructions in section 1.) and 2.).
 
 Create two partition in your SD card. Boot stream file is going to be installed in 1st  
 partition (type 53 - OnTrack DM6 Aux3 )and rootfs in second partition (type 83 - Linux).  
-Here is an example of SD card 2GB with two partitions :  
+Here is an example of 2G SD card with two partitions :  
   
   
 Disk /dev/sdb: 1977 MB, 1977614336 bytes  
@@ -193,7 +194,7 @@ Disk identifier: 0x00000000
 
 Formatting and partitioning a SD card  
 ---  
-Insert your SD card on card reader of your linux developing machine and list partition  
+Insert your SD card into a card reader of your linux developing machine and list partition  
 tables for all disks:  
  
 $: sudo fdisk -l  
