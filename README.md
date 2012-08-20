@@ -7,7 +7,7 @@ Software requirements
 On Debian distributions install as:
  
 $: sudo apt-get install gcc-arm-linux-gnueabi   
-$: sudo apt-get install git
+$: sudo apt-get install git  
 
 -Hardware requirements  
 SD card with two partition, 1st for boot and second for rootfs. See section 3. and 4.
@@ -23,16 +23,19 @@ Freescale imx-bootlets, Freescale utility elftosb2 and patches for imx-bootlets.
   
 Directory tree is as follows:  
 
-imx23-olinuxino    
-├── bootlets    
-│   ├── imx23_olinuxino_bootlets.patch  
+.
+├── bootlets  
 │   ├── elftosb-0.3  
+│   │   ├── elftosb2  
+│   │   └── Makefile  
+│   ├── imx23_olinuxino_bootlets.patch  
 │   └── imx-bootlets-src-10.05.02.tar.gz  
 ├── kernel  
+│   ├── usb_led.patch  
 │   └── usb.patch  
-├── rootfs  
-│     
-└── README.md  
+├── README.md  
+└── rootfs  
+
 
 1.) Building a kernel 3.x for the OLinuXino from sources  
 ===
@@ -46,7 +49,7 @@ Inside the new created directory linux-mainline, there are files representing pa
 Switch into directory linux-mainline to apply patch.  
 ```
 $: cd linux-mainline  
-$: patch -p1 < ../usb.patch  
+$: patch -p1 < ../usb_led.patch  
 ```
 response would be:  
 ```
@@ -68,7 +71,7 @@ Select `Boot options --->` and select following options:
   [*]   Supplement the appended DTB with traditional ATAG information  
 (console=ttyAMA0,115200 root=/dev/mmcblk0p2 rw rootwait)  Default kernel command string  
 ```
-Save configuration and exit.  
+Enable the smsc95xx driver in the kernel configuration. Save configuration and exit.  
 
 Compile kernel  
 ```
