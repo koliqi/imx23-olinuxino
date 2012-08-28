@@ -43,7 +43,7 @@ Directory tree is as follows:
 Switch into directory kernel and download kernel sources:  
 ```
 $: cd imx23-olinuxino/kernel  
-$: git clone -b patches-3.6-rc1 git://github.com/Freescale/linux-mainline.git   
+$: git clone -b patches-3.6-rc2 git://github.com/Freescale/linux-mainline.git   
 ```
 Inside the new created directory linux-mainline, there are files representing patches-3.6-rc1 branch.  
 Switch into directory linux-mainline to apply patch.  
