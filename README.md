@@ -31,6 +31,7 @@ Directory tree is as follows:
 │   ├── imx23_olinuxino_bootlets.patch  
 │   └── imx-bootlets-src-10.05.02.tar.gz  
 ├── kernel  
+|   ├── 0001-usb_led.patch  
 │   ├── usb_led.patch  
 │   └── usb.patch  
 ├── README.md  
@@ -43,13 +44,13 @@ Directory tree is as follows:
 Switch into directory kernel and download kernel sources:  
 ```
 $: cd imx23-olinuxino/kernel  
-$: git clone -b patches-3.6-rc1 git://github.com/Freescale/linux-mainline.git   
+$: git clone -b patches-3.6-rc2 git://github.com/Freescale/linux-mainline.git   
 ```
-Inside the new created directory linux-mainline, there are files representing patches-3.6-rc1 branch.  
+Inside the new created directory linux-mainline, there are files representing patches-3.6-rc2 branch.  
 Switch into directory linux-mainline to apply patch.  
 ```
 $: cd linux-mainline  
-$: patch -p1 < ../usb_led.patch  
+$: patch -p1 < ../0001-usb_led.patch  
 ```
 response would be:  
 ```
