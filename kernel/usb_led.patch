@@ -1,18 +1,32 @@
-From 3c4a161d1ce2d3fe8d84e7c800a2d432ba222506 Mon Sep 17 00:00:00 2001
-From: Fadil Berisha <devel@laptop.(none)>
-Date: Sun, 19 Aug 2012 16:33:21 -0400
-Subject: [PATCH 33/33] Modified imx23-olinuxino.dts, imx23.dtsi & mxs-phy.c
-
----
- arch/arm/boot/dts/imx23-olinuxino.dts |   65 +++++++++++++++++++++++++++++++--
- arch/arm/boot/dts/imx23.dtsi          |    8 +++-
- drivers/usb/otg/mxs-phy.c             |   52 ++++++++++++++++++++++----
- 3 files changed, 112 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx23-olinuxino.dts b/arch/arm/boot/dts/imx23-olinuxino.dts
-index a286873..cd4b9c9 100644
---- a/arch/arm/boot/dts/imx23-olinuxino.dts
-+++ b/arch/arm/boot/dts/imx23-olinuxino.dts
+diff -u a/arch/arm/boot/dts/imx23.dtsi b/arch/arm/boot/dts/imx23.dtsi
+--- a/arch/arm/boot/dts/imx23.dtsi 2012-08-28 23:00:09.000000000 +0200
++++ b/arch/arm/boot/dts/imx23.dtsi	2012-08-28 17:44:43.000000000 +0200
+@@ -425,7 +425,8 @@
+ 				status = "disabled";
+ 			};
+ 
+-			usbphy@8007c000 {
++			usbphy0: usbphy@8007c000 {
++				compatible = "fsl,imx23-usbphy";
+ 				reg = <0x8007c000 0x2000>;
+ 				status = "disabled";
+ 			};
+@@ -439,8 +440,11 @@
+ 		reg = <0x80080000 0x80000>;
+ 		ranges;
+ 
+-		usbctrl@80080000 {
++		usb0: usb@80080000 {
++			compatible = "fsl,imx23-usb", "fsl,imx27-usb";
+ 			reg = <0x80080000 0x40000>;
++			interrupts = <11>;
++			fsl,usbphy = <&usbphy0>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff -u a/arch/arm/boot/dts/imx23-olinuxino.dts b/arch/arm/boot/dts/imx23-olinuxino.dts
+--- a/arch/arm/boot/dts/imx23-olinuxino.dts	2012-08-28 23:00:02.000000000 +0200
++++ 2/arch/arm/boot/dts/imx23-olinuxino.dts	2012-08-28 17:46:35.000000000 +0200
 @@ -27,10 +27,36 @@
  			ssp0: ssp@80010000 {
  				compatible = "fsl,imx23-mmc";
@@ -51,26 +65,24 @@ index a286873..cd4b9c9 100644
  		};
  
  		apbx@80040000 {
-@@ -40,11 +66,42 @@
+@@ -45,6 +71,43 @@
+ 				pinctrl-0 = <&auart0_2pins_a>;
  				status = "okay";
  			};
- 
--			auart0: serial@8006c000 {
--				pinctrl-names = "default";
--				pinctrl-0 = <&auart0_2pins_a>;
++
 +			usbphy0: usbphy@8007c000 {
- 				status = "okay";
- 			};
++				status = "okay";
++			};
  		};
 +
-+	};
+ 	};
 +
 +	ahb@80080000 {
 +		usb0: usb@80080000 {
 +			vbus-supply = <&reg_usb0_vbus>;
 +			status = "okay";
 +		};
- 	};
++	};
 +
 +	regulators {
 +		compatible = "simple-bus";
@@ -97,37 +109,9 @@ index a286873..cd4b9c9 100644
 +	};	
  };
 +
-diff --git a/arch/arm/boot/dts/imx23.dtsi b/arch/arm/boot/dts/imx23.dtsi
-index 9700872..5710630 100644
---- a/arch/arm/boot/dts/imx23.dtsi
-+++ b/arch/arm/boot/dts/imx23.dtsi
-@@ -425,7 +425,8 @@
- 				status = "disabled";
- 			};
- 
--			usbphy@8007c000 {
-+			usbphy0: usbphy@8007c000 {
-+				compatible = "fsl,imx23-usbphy";
- 				reg = <0x8007c000 0x2000>;
- 				status = "disabled";
- 			};
-@@ -439,8 +440,11 @@
- 		reg = <0x80080000 0x80000>;
- 		ranges;
- 
--		usbctrl@80080000 {
-+		usb0: usb@80080000 {
-+			compatible = "fsl,imx23-usb", "fsl,imx27-usb";
- 			reg = <0x80080000 0x40000>;
-+			interrupts = <11>;
-+			fsl,usbphy = <&usbphy0>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/drivers/usb/otg/mxs-phy.c b/drivers/usb/otg/mxs-phy.c
-index c1a67cb..abacd3d 100644
---- a/drivers/usb/otg/mxs-phy.c
-+++ b/drivers/usb/otg/mxs-phy.c
+diff -u a/drivers/usb/otg/mxs-phy.c b/drivers/usb/otg/mxs-phy.c
+--- a/drivers/usb/otg/mxs-phy.c	2012-08-28 23:35:51.000000000 +0200
++++ b/drivers/usb/otg/mxs-phy.c	2012-08-28 23:36:03.000000000 +0200
 @@ -24,10 +24,20 @@
  #define DRIVER_NAME "mxs_phy"
  
@@ -149,7 +133,7 @@ index c1a67cb..abacd3d 100644
  #define BM_USBPHY_CTRL_SFTRST			BIT(31)
  #define BM_USBPHY_CTRL_CLKGATE			BIT(30)
  #define BM_USBPHY_CTRL_ENUTMILEVEL3		BIT(15)
-@@ -43,14 +53,33 @@ struct mxs_phy {
+@@ -43,14 +53,33 @@
  
  static void mxs_phy_hw_init(struct mxs_phy *mxs_phy)
  {
@@ -167,8 +151,7 @@ index c1a67cb..abacd3d 100644
 +	if (reset_sts) {
 +		dev_err(mxs_phy->phy.dev, "USB PHY reset failed!\n");
 +	}
- 
--	/* enable FS/LS device */
++
 +	/* Enable the PHY clock after reset. */
 +	writel_relaxed(BM_USBPHY_CTRL_SFTRST |
 +			BM_USBPHY_CTRL_CLKGATE,
@@ -183,12 +166,13 @@ index c1a67cb..abacd3d 100644
 +			BM_USBPHY_PWD_TXPWDIBIAS |
 +			BM_USBPHY_PWD_TXPWDFS, 
 +			base + HW_USBPHY_PWD_CLR);
-+
+ 
+-	/* enable FS/LS device */
 +	/* Enable FS/LS device.  Not supported on i.MX23. */
  	writel_relaxed(BM_USBPHY_CTRL_ENUTMILEVEL2 |
  			BM_USBPHY_CTRL_ENUTMILEVEL3,
  			base + HW_USBPHY_CTRL_SET);
-@@ -70,6 +99,17 @@ static void mxs_phy_shutdown(struct usb_phy *phy)
+@@ -70,6 +99,17 @@
  {
  	struct mxs_phy *mxs_phy = to_mxs_phy(phy);
  
@@ -206,7 +190,7 @@ index c1a67cb..abacd3d 100644
  	writel_relaxed(BM_USBPHY_CTRL_CLKGATE,
  			phy->io_priv + HW_USBPHY_CTRL_SET);
  
-@@ -81,8 +121,6 @@ static int mxs_phy_on_connect(struct usb_phy *phy, int port)
+@@ -81,8 +121,6 @@
  	dev_dbg(phy->dev, "Connect on port %d\n", port);
  
  	mxs_phy_hw_init(to_mxs_phy(phy));
@@ -215,6 +199,3 @@ index c1a67cb..abacd3d 100644
  
  	return 0;
  }
--- 
-1.7.9.5
-
