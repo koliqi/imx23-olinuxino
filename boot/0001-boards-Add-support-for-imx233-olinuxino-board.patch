@@ -1,7 +1,7 @@
-From 430054549687e8104cd79dddaab4648fc462ee28 Mon Sep 17 00:00:00 2001
+From f3f1e9b369ef727b85160dcdf39f2bfc17235b85 Mon Sep 17 00:00:00 2001
 From: Fadil Berisha <f.koliqi@gmail.com>
-Date: Sat, 8 Sep 2012 02:14:12 -0400
-Subject: [PATCH 1/1] boards: Add support for imx233-olinuxino board
+Date: Sun, 9 Sep 2012 15:57:38 -0400
+Subject: [PATCH v2 1/1] boards: Add support for imx233-olinuxino board
 
 imx23-olinuxino is a board designed by Olimex.
 
@@ -24,13 +24,13 @@ Signed-off-by: Fadil Berisha <f.koliqi@gmail.com>
  arch/arm/Makefile                                  |    1 +
  arch/arm/boards/imx233-olinuxino/Makefile          |    1 +
  arch/arm/boards/imx233-olinuxino/config.h          |   21 ++
- arch/arm/boards/imx233-olinuxino/env/bin/boot      |   32 ++
- arch/arm/boards/imx233-olinuxino/env/bin/init      |   15 +
- arch/arm/boards/imx233-olinuxino/env/config        |   42 +++
- arch/arm/boards/imx233-olinuxino/imx23-olinuxino.c |  254 +++++++++++++
- arch/arm/configs/imx233-olinuxino_defconfig        |  375 ++++++++++++++++++++
+ arch/arm/boards/imx233-olinuxino/env/bin/boot      |   32 +++
+ arch/arm/boards/imx233-olinuxino/env/bin/init      |   15 ++
+ arch/arm/boards/imx233-olinuxino/env/config        |   42 ++++
+ arch/arm/boards/imx233-olinuxino/imx23-olinuxino.c |  254 ++++++++++++++++++++
+ arch/arm/configs/imx233-olinuxino_defconfig        |   63 +++++
  arch/arm/mach-mxs/Kconfig                          |    7 +
- 9 files changed, 748 insertions(+)
+ 9 files changed, 436 insertions(+)
  create mode 100644 arch/arm/boards/imx233-olinuxino/Makefile
  create mode 100644 arch/arm/boards/imx233-olinuxino/config.h
  create mode 100644 arch/arm/boards/imx233-olinuxino/env/bin/boot
@@ -194,7 +194,7 @@ index 0000000..0e95373
 +PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m "
 diff --git a/arch/arm/boards/imx233-olinuxino/imx23-olinuxino.c b/arch/arm/boards/imx233-olinuxino/imx23-olinuxino.c
 new file mode 100644
-index 0000000..7c4ff56
+index 0000000..0482638
 --- /dev/null
 +++ b/arch/arm/boards/imx233-olinuxino/imx23-olinuxino.c
 @@ -0,0 +1,254 @@
@@ -308,7 +308,7 @@ index 0000000..7c4ff56
 +
 +	imx23_usb_phy_enable();
 +
-+	add_generic_usb_ehci_device(-1, IMX_USB_BASE, NULL);
++	add_generic_usb_ehci_device(DEVICE_ID_DYNAMIC, IMX_USB_BASE, NULL);
 +}
 +
 +/**
@@ -454,253 +454,48 @@ index 0000000..7c4ff56
 +*/
 diff --git a/arch/arm/configs/imx233-olinuxino_defconfig b/arch/arm/configs/imx233-olinuxino_defconfig
 new file mode 100644
-index 0000000..66c4743
+index 0000000..40b7e1d
 --- /dev/null
 +++ b/arch/arm/configs/imx233-olinuxino_defconfig
-@@ -0,0 +1,375 @@
-+
-+CONFIG_ARM=y
-+CONFIG_ARM_LINUX=y
-+
-+#
-+#System Type
-+#
-+#CONFIG_ARCH_AT91 is not set
-+#CONFIG_ARCH_EP93XX is not set
-+#CONFIG_ARCH_IMX is not set
+@@ -0,0 +1,63 @@
 +CONFIG_ARCH_MXS=y
-+#CONFIG_ARCH_NETX is not set
-+#CONFIG_ARCH_NOMADIK is not set
-+#CONFIG_ARCH_OMAP is not set
-+#CONFIG_ARCH_PXA is not set
-+#CONFIG_ARCH_S3C24xx is not set
-+#CONFIG_ARCH_S3C64xx is not set
-+#CONFIG_ARCH_VERSATILE is not set
-+#CONFIG_ARCH_TEGRA is not set
-+
-+#
-+#Processor Type
-+#
-+CONFIG_CPU_32=y
-+CONFIG_CPU_ARM926T=y
-+CONFIG_CPU_32v5=y
-+
-+#
-+#processor features
-+#
-+#CONFIG_BOOT_ENDIANNESS_SWITCH is not set
-+CONFIG_ARCH_TEXT_BASE=0x42000000
-+CONFIG_BOARDINFO="Olimex.ltd imx233-olinuxino"
-+
-+#
-+#Freescale i.MX System-on-Chip
-+#
-+CONFIG_ARCH_IMX23=y
-+#CONFIG_ARCH_IMX28 is not set
-+#CONFIG_MACH_MX23EVK is not set
-+#CONFIG_MACH_CHUMBY is not set
 +CONFIG_MACH_IMX233_OLINUXINO=y
-+
-+#
-+#i.MX specific settings
-+#
-+#CONFIG_MXS_OCOTP is not set
-+
-+#
-+#Board specific settings
-+#
 +CONFIG_AEABI=y
-+
-+#
-+#Arm specific settings
-+#
-+CONFIG_CMD_ARM_CPUINFO=y
 +CONFIG_ARM_OPTIMZED_STRING_FUNCTIONS=y
-+CONFIG_ARM_EXCEPTIONS=y
-+#CONFIG_ARM_UNWIND is not set
-+CONFIG_DEFCONFIG_LIST="$ARCH_DEFCONFIG"
-+CONFIG_GREGORIAN_CALENDER=y
-+CONFIG_HAS_KALLSYMS=y
-+CONFIG_HAS_MODULES=y
-+CONFIG_CMD_MEMORY=y
-+CONFIG_ENV_HANDLING=y
-+CONFIG_GENERIC_GPIO=y
-+CONFIG_BLOCK=y
-+CONFIG_BLOCK_WRITE=y
-+CONFIG_FILETYPE=y
-+CONFIG_BINFMT=y
-+CONFIG_UIMAGE=y
-+CONFIG_GLOBALVAR=y
-+CONFIG_STDDEV=y
-+
-+#
-+#General Settings
-+#
-+CONFIG_LOCALVERSION=""
-+CONFIG_LOCALVERSION_AUTO=y
-+CONFIG_BANNER=y
-+CONFIG_ENVIRONMENT_VARIABLES=y
-+
-+#
-+#memory layout
-+#
-+#CONFIG_MMU is not set
-+CONFIG_HAVE_CONFIGURABLE_TEXT_BASE=y
-+CONFIG_TEXT_BASE=0x42000000
-+CONFIG_BAREBOX_MAX_IMAGE_SIZE=0xffffffff
-+CONFIG_BAREBOX_MAX_BARE_INIT_SIZE=0xffffffff
-+CONFIG_HAVE_CONFIGURABLE_MEMORY_LAYOUT=y
-+CONFIG_MEMORY_LAYOUT_DEFAULT=y
-+#CONFIG_MEMORY_LAYOUT_FIXED is not set
-+CONFIG_STACK_SIZE=0x8000
-+CONFIG_MALLOC_SIZE=0x400000
 +CONFIG_BROKEN=y
 +CONFIG_EXPERIMENTAL=y
-+CONFIG_MALLOC_DLMALLOC=y
-+#CONFIG_MALLOC_TLSF is not set
 +CONFIG_MODULES=y
-+#CONFIG_KALLSYMS is not set
-+CONFIG_PROMPT="barebox:"
-+CONFIG_BAUDRATE=115200
 +CONFIG_LONGHELP=y
-+CONFIG_CBSIZE=1024
-+CONFIG_MAXARGS=16
-+CONFIG_SHELL_HUSH=y
-+#CONFIG_SHELL_SIMPLE is not set
-+CONFIG_GLOB=y
-+CONFIG_GLOB_SORT=y
-+CONFIG_PROMPT_HUSH_PS2="> "
-+#CONFIG_HUSH_FANCY_PROMPT is not set
-+CONFIG_HUSH_GETOPT=y
 +CONFIG_CMDLINE_EDITING=y
 +CONFIG_AUTO_COMPLETE=y
 +CONFIG_MENU=y
-+#CONFIG_PASSWORD is not set
-+CONFIG_DYNAMIC_CRC_TABLE=y
-+CONFIG_ERRNO_MESSAGES=y
-+CONFIG_TIMESTAMP=y
-+CONFIG_CONSOLE_FULL=y
-+CONFIG_CONSOLE_ACTIVATE_FIRST=y
-+CONFIG_PARTITION=y
-+CONFIG_PARTITION_DISK=y
-+CONFIG_PARTITION_DISK_DOS=y
-+CONFIG_DEFAULT_ENVIRONMENT=y
 +CONFIG_DEFAULT_ENVIRONMENT_GENERIC_NEW=y
-+#CONFIG_DEFAULT_ENVIRONMENT_GENERIC is not set
 +CONFIG_DEFAULT_ENVIRONMENT_PATH="arch/arm/boards/imx233-olinuxino/env"
 +CONFIG_BAREBOXENV_TARGET=y
-+CONFIG_POLLER=y
-+#CONFIG_RESET_SOURCE is not set
-+
-+#
-+#Debugging
-+#
 +CONFIG_DEBUG_INFO=y
 +CONFIG_ENABLE_FLASH_NOISE=y
 +CONFIG_ENABLE_PARTITION_NOISE=y
 +CONFIG_ENABLE_DEVICE_NOISE=y
-+CONFIG_COMMAND_SUPPORT=y
-+#CONFIG_HAS_POWEROFF is not set
-+
-+#
-+#commands
-+#
-+
-+#
-+#scripting
-+#
 +CONFIG_CMD_EDIT=y
 +CONFIG_CMD_SLEEP=y
-+#CONFIG_CMD_MSLEEP is not set
 +CONFIG_CMD_SAVEENV=y
-+CONFIG_CMD_LOADENV=y
 +CONFIG_CMD_EXPORT=y
 +CONFIG_CMD_PRINTENV=y
 +CONFIG_CMD_READLINE=y
-+CONFIG_CMD_TRUE=y
-+CONFIG_CMD_FALSE=y
-+#CONFIG_CMD_MENU is not set
-+#CONFIG_CMD_LOGIN is not set
-+#CONFIG_CMD_PASSWD is not set
-+#CONFIG_CMD_TIME is not set
-+CONFIG_CMD_GLOBAL=y
-+
-+#
-+#file commands
-+#
-+CONFIG_CMD_LS=y
-+CONFIG_CMD_RM=y
-+CONFIG_CMD_CAT=y
-+CONFIG_CMD_MKDIR=y
-+CONFIG_CMD_RMDIR=y
-+CONFIG_CMD_CP=y
-+CONFIG_CMD_PWD=y
-+CONFIG_CMD_CD=y
-+CONFIG_CMD_MOUNT=y
-+CONFIG_CMD_UMOUNT=y
-+CONFIG_CMD_AUTOMOUNT=y
-+CONFIG_CMD_BASENAME=y
-+#CONFIG_CMD_DIRNAME is not set
-+
-+#
-+#console
-+#
-+CONFIG_CMD_CLEAR=y
-+CONFIG_CMD_ECHO=y
 +CONFIG_CMD_ECHO_E=y
-+
-+#
-+#memory
-+#
-+#CONFIG_CMD_LOADB is not set
-+#CONFIG_CMD_LOADY is not set
-+#CONFIG_CMD_LOADS is not set
-+#CONFIG_CMD_MEMINFO is not set
-+#CONFIG_CMD_IOMEM is not set
-+#CONFIG_CMD_CRC is not set
-+#CONFIG_CMD_MD5SUM is not set
-+#CONFIG_CMD_SHA1SUM is not set
-+#CONFIG_CMD_SHA256SUM is not set
-+#CONFIG_CMD_SHA224SUM is not set
 +CONFIG_CMD_MTEST=y
 +CONFIG_CMD_MTEST_ALTERNATIVE=y
-+
-+#
-+#flash
-+#
-+#CONFIG_CMD_FLASH is not set
-+
-+#
-+#booting
-+#
-+CONFIG_CMD_BOOTM=y
 +CONFIG_CMD_BOOTM_SHOW_TYPE=y
 +CONFIG_CMD_BOOTM_VERBOSE=y
 +CONFIG_CMD_BOOTM_INITRD=y
 +CONFIG_CMD_BOOTM_OFTREE=y
 +CONFIG_CMD_BOOTM_OFTREE_UIMAGE=y
-+#CONFIG_CMD_BOOTM_AIMAGE is not set
 +CONFIG_CMD_UIMAGE=y
 +CONFIG_CMD_BOOTZ=y
-+CONFIG_CMD_BOOTU=y
-+CONFIG_FLEXIBLE_BOOTARGS=y
 +CONFIG_CMD_RESET=y
-+#CONFIG_CMD_GO is not set
 +CONFIG_CMD_OFTREE=y
 +CONFIG_CMD_TIMEOUT=y
 +CONFIG_CMD_PARTITION=y
-+CONFIG_CMD_TEST=y
-+CONFIG_CMD_VERSION=y
-+CONFIG_CMD_HELP=y
-+#CONFIG_CMD_MAGICVAR is not set
-+CONFIG_CMD_DEVINFO=y
-+CONFIG_CMD_INSMOD=y
-+#CONFIG_CMD_LSMOD is not set
-+#CONFIG_CMD_BMP is not set
-+#CONFIG_CMD_GPIO is not set
-+#CONFIG_CMD_UNCOMPRESS is not set
-+#CONFIG_CMD_LED is not set
-+CONFIG_CMD_USB=y
 +CONFIG_NET=y
 +CONFIG_NET_DHCP=y
 +CONFIG_NET_NFS=y
@@ -709,130 +504,23 @@ index 0000000..66c4743
 +CONFIG_NET_TFTP_PUSH=y
 +CONFIG_NET_NETCONSOLE=y
 +CONFIG_NET_RESOLV=y
-+
-+#
-+#Drivers
-+#
-+
-+#
-+#serial drivers
-+#
-+#CONFIG_DRIVER_SERIAL_ARM_DCC is not set
-+CONFIG_DRIVER_SERIAL_STM378X=y
-+#CONFIG_DRIVER_SERIAL_NS16550 is not set
-+CONFIG_MIIDEV=y
-+
-+#
-+#Network drivers
-+#
-+#CONFIG_DRIVER_NET_SMC911X is not set
-+#CONFIG_DRIVER_NET_SMC91111 is not set
-+#CONFIG_DRIVER_NET_KS8851_MLL is not set
 +CONFIG_NET_USB=y
-+#CONFIG_NET_USB_ASIX is not set
 +CONFIG_NET_USB_SMSC95XX=y
-+
-+#
-+#SPI drivers
-+#
-+CONFIG_SPI=y
-+#CONFIG_I2C is not set
-+
-+#
-+#flash drivers
-+#
-+#CONFIG_DRIVER_CFI is not set
-+#CONFIG_MTD_M25P80 is not set
-+#CONFIG_MTD is not set
-+CONFIG_DISK=y
-+CONFIG_DISK_WRITE=y
-+
-+#
-+#drive types
-+#
-+CONFIG_DISK_ATA=y
-+
-+#
-+#interface types
-+#
 +CONFIG_DISK_INTF_PLATFORM_IDE=y
 +CONFIG_USB=y
 +CONFIG_USB_EHCI=y
-+#CONFIG_USB_OHCI is not set
-+#CONFIG_USB_ULPI is not set
 +CONFIG_USB_STORAGE=y
-+#CONFIG_USB_GADGET is not set
-+CONFIG_USB_HAVE_GADGET_DRIVER=y
 +CONFIG_VIDEO=y
 +CONFIG_DRIVER_VIDEO_STM=y
 +CONFIG_MCI=y
-+
-+#
-+#--- Feature list ---
-+#
 +CONFIG_MCI_STARTUP=y
-+CONFIG_MCI_INFO=y
-+CONFIG_MCI_WRITE=y
-+
-+#
-+#--- MCI host drivers ---
-+#
 +CONFIG_MCI_MXS=y
-+#CONFIG_MCI_SPI is not set
-+
-+#
-+#MFD
-+#
-+#CONFIG_MFD_MC13XXX is not set
 +CONFIG_LED=y
-+#CONFIG_LED_GPIO is not set
-+#CONFIG_LED_TRIGGERS is not set
-+
-+#
-+#EEPROM support
-+#
-+#CONFIG_EEPROM_AT25 is not set
-+
-+#
-+#Input device support
-+#
 +CONFIG_KEYBOARD_GPIO=y
-+#CONFIG_WATCHDOG is not set
-+#CONFIG_PWM is not set
-+
-+#
-+#DMA support
-+#
 +CONFIG_MXS_APBH_DMA=y
-+
-+#
-+#Filesystem support
-+#
-+CONFIG_FS_AUTOMOUNT=y
-+#CONFIG_FS_CRAMFS is not set
-+CONFIG_FS_RAMFS=y
-+CONFIG_FS_DEVFS=y
 +CONFIG_FS_TFTP=y
 +CONFIG_FS_NFS=y
 +CONFIG_FS_FAT=y
-+#CONFIG_FS_FAT_WRITE is not set
-+#CONFIG_FS_FAT_LFN is not set
-+
-+#
-+#Library routines
-+#
-+CONFIG_PARAMETER=y
-+CONFIG_UNCOMPRESS=y
-+#CONFIG_ZLIB is not set
-+#CONFIG_BZLIB is not set
-+#CONFIG_GENERIC_FIND_NEXT_BIT is not set
-+CONFIG_PROCESS_ESCAPE_SEQUENCE=y
-+#CONFIG_LZO_DECOMPRESS is not set
-+CONFIG_FDT=y
-+CONFIG_OFTREE=y
-+CONFIG_QSORT=y
-+CONFIG_CRC32=y
-+#CONFIG_DIGEST is not set
 diff --git a/arch/arm/mach-mxs/Kconfig b/arch/arm/mach-mxs/Kconfig
 index 6f324a0..ff295f1 100644
 --- a/arch/arm/mach-mxs/Kconfig
