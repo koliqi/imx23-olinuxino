@@ -50,7 +50,10 @@ Directory tree is as follow:
 │   └── imx-bootlets-src-10.05.02.tar.gz  
 ├── Building a kernel  for the OLinuXino.md  
 ├── kernel  
+│   ├── 0001-onlydtpart.patch  
+│   ├── 0001-usbfix.patch  
 │   ├── 0001-usb_led.patch  
+│   ├── 0002-improvephyinit.patch  
 │   ├── usb_led.patch  
 │   └── usb.patch  
 ├── Make bootable SD-Card.md  
@@ -97,8 +100,8 @@ Select `Boot options --->` and select following options:
  (console=ttyAMA0,115200 root=/dev/mmcblk0p4 rw rootwait) Default kernel command string  
 ```
 
-Make sure to enable the smsc95xx driver in the kernel configuration, otherwise you won't  
-get your network up in the olinuxino. Save configuration and exit.  
+Make sure to enable the smsc95xx driver in the kernel configuration, otherwise you won't get your network up in the olinuxino.   
+Save configuration and exit.   
 
 * Compile kernel  
 ```
@@ -108,7 +111,7 @@ Kernel is ready at arch/arm/boot/uImage. Copy kernel on SD Card. In my system SD
 as /dev/sdb, so write on third partition accordingly with your system:  
 ```
 $: sudo dd if=arch/arm/boot/uImage of=/dev/sdb3  
-
+```
 
 * Create device tree binary .dtb file:  
 ```
@@ -205,7 +208,7 @@ Final response would be:
 ```
 To install uboot bootstream onto SD/MMC card, type: sudo dd if=sd_mmc_uboot_bootstream.raw of=/dev/sdXY where X is the correct letter for your sd or mmc device (to check, do a ls /dev/sd*) and Y is the partition number for the bootstream
 ```
-In my system sd device is /dev/sdb1, so writing bootstream file in card is done by:  
+Write bootstream file in 1st partition:  
 ```
 $: sudo dd if=sd_mmc_uboot_bootstream.raw of=/dev/sdb1  
 ```
