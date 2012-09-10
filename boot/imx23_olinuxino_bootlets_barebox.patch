@@ -1,0 +1,59 @@
+--- /home/devel/Projects/olinuxino-3.6-rc1/imx23-olinuxino/boot/imx-bootlets-src-10.05.02/Makefile	2012-08-07 23:40:53.413879665 -0400
++++ Makefile	2012-09-08 21:01:22.522967236 -0400
+@@ -29,7 +29,8 @@
+ 
+ 
+ gen_bootstream: linux_prep boot_prep power_prep linux.db uboot.db linux_prebuilt.db uboot_prebuilt.db updater_prebuilt.db
+-	@echo "generating linux kernel boot stream image"
++#@echo "generating linux kernel boot stream image"
++	@echo "----------------------------------"
+ ifeq "$(DFT_IMAGE)" "$(wildcard $(DFT_IMAGE))"
+ 	@echo "by using the rootfs/boot/zImage"
+ 	sed -i 's,[^ *]zImage.*;,\tzImage="$(DFT_IMAGE)";,' linux.db
+@@ -38,23 +39,34 @@
+ 	sed -i 's,[^ *]image.*;,\timage="$(DFT_UBOOT)";,' uboot.db
+ 	elftosb2 -z -c ./uboot.db -o i$(ARCH)_uboot.sb
+ else
+-	@echo "by using the pre-built kernel"
+-	elftosb2 -d -z -c ./linux_prebuilt.db -o i$(ARCH)_linux.sb
+-	#@echo "generating U-Boot boot stream image"
+-	#elftosb2 -z -c ./uboot_prebuilt.db -o i$(ARCH)_uboot.sb
++#@echo "by using the pre-built kernel"
++#elftosb2 -d -z -c ./linux_prebuilt.db -o i$(ARCH)_linux.sb
++	@echo "generating U-Boot boot stream image"
++	elftosb2 -z -c ./uboot_prebuilt.db -o i$(ARCH)_uboot.sb
+ endif
+-	echo "generating kernel bootstream file sd_mmc_bootstream.raw"
+-	#Please use cfimager to burn xxx_linux.sb. The below way will no
+-	#work at imx28 platform.
+-	rm -f sd_mmc_bootstream.raw
+-	dd if=/dev/zero of=sd_mmc_bootstream.raw bs=512 count=4
+-	dd if=imx23_linux.sb of=sd_mmc_bootstream.raw ibs=512 seek=4 \
++#echo "generating kernel bootstream file sd_mmc_bootstream.raw"
++#Please use cfimager to burn xxx_linux.sb. The below way will no
++#work at imx28 platform.
++#rm -f sd_mmc_bootstream.raw
++#dd if=/dev/zero of=sd_mmc_bootstream.raw bs=512 count=4
++#dd if=imx23_linux.sb of=sd_mmc_bootstream.raw ibs=512 seek=4 \
++#conv=sync,notrunc
++#@echo "To install bootstream onto SD/MMC card, type: sudo dd \
++#if=sd_mmc_bootstream.raw of=/dev/sdXY where X is the correct letter \
++#for your sd or mmc device (to check, do a ls /dev/sd*) and Y \
++#is the partition number for the bootstream"
++
++	rm -f sd_mmc_uboot_bootstream.raw
++	dd if=/dev/zero of=sd_mmc_uboot_bootstream.raw bs=512 count=4
++	dd if=imx23_uboot.sb of=sd_mmc_uboot_bootstream.raw ibs=512 seek=4 \
+ 	conv=sync,notrunc
+-	@echo "To install bootstream onto SD/MMC card, type: sudo dd \
+-	if=sd_mmc_bootstream.raw of=/dev/sdXY where X is the correct letter \
++	@echo "To install uboot bootstream onto SD/MMC card, type: sudo dd \
++	if=sd_mmc_uboot_bootstream.raw of=/dev/sdXY where X is the correct letter \
+ 	for your sd or mmc device (to check, do a ls /dev/sd*) and Y \
+ 	is the partition number for the bootstream"
+ 
++
++
+ # TODO
+ #	@echo "generating uuc boot stream image"
+ 

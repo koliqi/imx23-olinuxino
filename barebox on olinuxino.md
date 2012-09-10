@@ -48,6 +48,7 @@ Directory tree is as follow:
 │   ├── imx23_olinuxino_bootlets_barebox.patch  
 │   ├── imx23_olinuxino_bootlets.patch  
 │   └── imx-bootlets-src-10.05.02.tar.gz  
+├── Building a kernel  for the OLinuXino.md  
 ├── kernel  
 │   ├── 0001-usb_led.patch  
 │   ├── usb_led.patch  
@@ -55,6 +56,7 @@ Directory tree is as follow:
 ├── Make bootable SD-Card.md  
 ├── README.md  
 └── rootfs  
+
 ```
 
 
@@ -68,14 +70,16 @@ $: cd imx23-olinuxino/kernel
 $: git clone -b patches-3.6-rc2 git://github.com/Freescale/linux-mainline.git  
 ```
 Inside the new created directory linux-mainline, there are files representing patches-3.6-rc2 branch.  
-Switch into directory linux-mainline to apply patch and export env variales:  
+Switch into directory linux-mainline to apply patch and export env variales:   
 ```
 $: cd linux-mainline  
-$: patch -p1 < ../0001-usb_led.patch  
+$: patch -p1 < ../0001-onlydtpart.patch   
+$: patch -p1 < ../0001-usbfix.patch  
+$: patch -p1 < ../0002-improvephyinit.patch  
 $: export ARCH=arm  
 $: export CROSS_COMPILE=arm-linux-gnueabi  
 ```
-* Configure kernel  
+ Configure kernel  
 ---
 Start from supplied default mxs_defconfig configuration:  
 ```
@@ -101,12 +105,12 @@ get your network up in the olinuxino. Save configuration and exit.
 $: make uImage modules  
 ```
 Kernel is ready at arch/arm/boot/uImage. Copy kernel on SD Card. In my system SD Card is identified  
-as /dev/sdb, so write dd command accordingly with your system:  
+as /dev/sdb, so write on third partition accordingly with your system:  
 ```
-$: dd if=arch/arm/boot/uImage of=/dev/sdb3  
+$: sudo dd if=arch/arm/boot/uImage of=/dev/sdb3  
 
 
-* Create device tree blob .dtb file:  
+* Create device tree binary .dtb file:  
 ```
 $: make imx23-olinuxino.dtb  
 ```
@@ -124,7 +128,7 @@ Switch into directory boot and get barebox code:
 ```
 $: git clone git://git.pengutronix.de/git/barebox.git  
 ```
-then go into directory barebox and apply patches:  
+Switch into directory barebox and apply patches:  
 ```
 $: patch -p1 < ../0001-boards-Add-support-for-imx233-olinuxino-board.patch  
 ```
@@ -160,7 +164,7 @@ In top directory are following files:
 Copy enviroment file in second partition of CD Card. In my system SD Card is identified  
 as /dev/sdb, so write dd command accordingly with your system:  
 ```
-$: dd if=barebox_default_env of=/dev/sdb2  
+$: sudo dd if=barebox_default_env of=/dev/sdb2  
 ```
 Executable file `barebox` will be transfered on SD Card combined with bootlets.  
 
@@ -182,15 +186,15 @@ Next, switch into directory boot and untar archive imx-bootlets-src-10.05.02.tar
 ```
 $: tar xvzf imx-bootlets-src-10.05.02.tar.gz  
 ```
-then go into directory imx-bootlets-src-10.05.02 and apply patches:  
+switch into directory imx-bootlets-src-10.05.02 and apply patches:  
 ```
-$: patch -p1 < ../imx23_olinuxino_bootlets.patch  
-$: patch -p1 < ../imx23_olinuxino_bootlets_barebox.patch  
+$: patch -p1 <../imx23_olinuxino_bootlets.patch  
+$: patch Makefile -p1 <../imx23_olinuxino_bootlets_barebox.patch  
 ```
 This bootlets package require u-boot in this directory, we have created barebox instead,  
 so make symbolic link as:  
 ```
-$: ln -s ../../barebox/barebox u-boot  
+$: ln -s ../../boot/barebox/barebox u-boot  
 ```
 Make boot stream file:  
 ```

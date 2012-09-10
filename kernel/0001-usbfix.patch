@@ -1,0 +1,110 @@
+From cb9507742e6348308ee1e2c324b2a5b0a8dd01f3 Mon Sep 17 00:00:00 2001
+From: Mike Thompson <mpthompson@gmail.com>
+Date: Wed, 29 Aug 2012 09:31:03 -0300
+Subject: [PATCH] usb: otg: mxs-phy: Fix mx23 operation
+
+Currently mx23 fails to enumerate a USB device:
+
+[ 1.300000] hub 1-0:1.0: unable to enumerate USB device on port 1
+[ 1.520000] hub 1-0:1.0: unable to enumerate USB device on port 1
+[ 1.740000] hub 1-0:1.0: unable to enumerate USB device on port 1
+[ 1.960000] hub 1-0:1.0: unable to enumerate USB device on port 1
+[ 2.180000] hub 1-0:1.0: unable to enumerate USB device on port 1
+
+Use a kernel workqueue to asynchronously delay the setting of 
+ENHOSTDISCONDETECT bit until after higher level hub connect/reset processing
+is complete.  Prematurely setting the bit seems to prevent the connection
+processing from completing and not setting it prevents disconnect from being
+detected.  No delay is apparently needed for clearing of ENHOSTDISCONDETECT.
+
+Successfully tested on a mx23-olinuxino and mx28evk.
+
+Signed-off-by: Mike Thompson <mpthompson@gmail.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+ drivers/usb/otg/mxs-phy.c |   34 +++++++++++++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/otg/mxs-phy.c b/drivers/usb/otg/mxs-phy.c
+index c1a67cb..8188380 100644
+--- a/drivers/usb/otg/mxs-phy.c
++++ b/drivers/usb/otg/mxs-phy.c
+@@ -20,6 +20,7 @@
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/workqueue.h>
+ 
+ #define DRIVER_NAME "mxs_phy"
+ 
+@@ -34,9 +35,12 @@
+ #define BM_USBPHY_CTRL_ENUTMILEVEL2		BIT(14)
+ #define BM_USBPHY_CTRL_ENHOSTDISCONDETECT	BIT(1)
+ 
++#define MXY_PHY_ENHOSTDISCONDETECT_DELAY	250
++
+ struct mxs_phy {
+ 	struct usb_phy phy;
+ 	struct clk *clk;
++	struct delayed_work enhostdiscondetect_work;
+ };
+ 
+ #define to_mxs_phy(p) container_of((p), struct mxs_phy, phy)
+@@ -62,6 +66,7 @@ static int mxs_phy_init(struct usb_phy *phy)
+ 
+ 	clk_prepare_enable(mxs_phy->clk);
+ 	mxs_phy_hw_init(mxs_phy);
++	INIT_DELAYED_WORK(&mxs_phy->enhostdiscondetect_work, NULL);
+ 
+ 	return 0;
+ }
+@@ -76,13 +81,34 @@ static void mxs_phy_shutdown(struct usb_phy *phy)
+ 	clk_disable_unprepare(mxs_phy->clk);
+ }
+ 
++static void mxs_phy_enhostdiscondetect_delay(struct work_struct *ws)
++{
++	struct mxs_phy *mxs_phy = container_of(ws, struct mxs_phy,
++						enhostdiscondetect_work.work);
++
++	/* Enable HOSTDISCONDETECT after delay. */
++	dev_dbg(mxs_phy->phy.dev, "Setting ENHOSTDISCONDETECT\n");
++	writel_relaxed(BM_USBPHY_CTRL_ENHOSTDISCONDETECT,
++				mxs_phy->phy.io_priv + HW_USBPHY_CTRL_SET);
++}
++
+ static int mxs_phy_on_connect(struct usb_phy *phy, int port)
+ {
++	struct mxs_phy *mxs_phy = to_mxs_phy(phy);
++
+ 	dev_dbg(phy->dev, "Connect on port %d\n", port);
+ 
+-	mxs_phy_hw_init(to_mxs_phy(phy));
+-	writel_relaxed(BM_USBPHY_CTRL_ENHOSTDISCONDETECT,
+-			phy->io_priv + HW_USBPHY_CTRL_SET);
++	mxs_phy_hw_init(mxs_phy);
++
++	/*
++	 * Delay enabling ENHOSTDISCONDETECT so that connection and
++	 * reset processing can be completed for the root hub.
++	 */
++	dev_dbg(phy->dev, "Delaying setting ENHOSTDISCONDETECT\n");
++	PREPARE_DELAYED_WORK(&mxs_phy->enhostdiscondetect_work,
++			mxs_phy_enhostdiscondetect_delay);
++	schedule_delayed_work(&mxs_phy->enhostdiscondetect_work,
++			msecs_to_jiffies(MXY_PHY_ENHOSTDISCONDETECT_DELAY));
+ 
+ 	return 0;
+ }
+@@ -91,6 +117,8 @@ static int mxs_phy_on_disconnect(struct usb_phy *phy, int port)
+ {
+ 	dev_dbg(phy->dev, "Disconnect on port %d\n", port);
+ 
++	/* No need to delay before clearing ENHOSTDISCONDETECT. */
++	dev_dbg(phy->dev, "Clearing ENHOSTDISCONDETECT\n");
+ 	writel_relaxed(BM_USBPHY_CTRL_ENHOSTDISCONDETECT,
+ 			phy->io_priv + HW_USBPHY_CTRL_CLR);
+ 
+-- 
+1.7.9.5
+
