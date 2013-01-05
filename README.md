@@ -1,27 +1,27 @@
-Building a kernel 3.7.1 for the olinuxino:
+Building a kernel 3.7.1 for the olinuxino
 ===
 Latest Stable Kernel 3.7.1 include USB support for imx23-olinuxino boards. This  
 build contain patches for SPI and I2C interface and also patches for easy kernel  
-integration of wifi rtl8188cu device.  
+integration of wifi rtl8188cu device. You can download precompiled image from here:  
+https://www.dropbox.com/s/rfnmzdbcu21pfgf/sd_mmc_bootstream.raw  
 
-
-Software requirements:  
+Software requirements  
 ---
--Cross compiler and git.  
+Cross compiler and git.  
 
 On Debian distributions install as:  
  
 $: sudo apt-get install gcc-arm-linux-gnueabi  
 $: sudo apt-get install git  
 
--Hardware requirements:  
+Hardware requirements  
 ---
 SD card with two partition:
 - boot partition for kernel, and 
 -rootfs partition with your prefered linux distribution.  
 See file `Make bootable SD-Card` for instructions how to make the two partition SD card  
 
-Getting the code:  
+Getting the code  
 ===
 ```  
 $: git clone https://github.com/koliqi/imx23-olinuxino  
@@ -37,18 +37,18 @@ http://repository.timesys.com/buildsources/e/elftosb/elftosb-10.12.01/
 Directory tree is as follows:  
 
 ├── boot  
-│   ├── elftosb-0.3  
-│   │   ├── elftosb2  
-│   │   └── Makefile  
-│   ├── imx23_olinuxino_bootlets.patch  
-│   └── imx-bootlets-src-10.05.02.tar.gz  
+│   ├── 0001-boards-Add-support-for-imx233-olinuxino-board.patch  
+│   ├── elftosb-0.3  
+│   │   ├── elftosb2  
+│   │   └── Makefile  
+│   ├── imx23_olinuxino_bootlets.patch  
+│   └── imx-bootlets-src-10.05.02.tar.gz  
 ├── kernel  
-│   ├── 0001-ARM-imx23-olinuxino-Add-spi-support.patch  
-│   ├── 0001-MXS-imx23-olinuxino-Add-i2c-support.patch  
-│   └── 0001-rtl8192cu.patch  
-│  
-├──Building a kernel 3.7.1 for the olinuxino.md  
+│   ├── 0001-ARM-imx23-olinuxino-Add-spi-support.patch  
+│   ├── 0001-MXS-imx23-olinuxino-Add-i2c-support.patch  
+│   └── 0001-rtl8192cu.patch  
 ├── Make bootable SD-Card.md  
+├── README.md  
 └── rootfs  
 
 
@@ -239,7 +239,7 @@ Instead of CROSS_COMPILE=arm-linux-gnueabi- write CROSS_COMPILE=arm-none-eabi-
 and follow instructions in section 1) and 2).  
 
 *) i.MX23 Linux BSP User’s Guide, Freescale Rev. 10.05.03, 05/2010  
-https://www.dropbox.com/s/rfnmzdbcu21pfgf/sd_mmc_bootstream.raw
+
 
 
 
