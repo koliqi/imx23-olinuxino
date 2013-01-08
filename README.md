@@ -145,7 +145,7 @@ $: make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- imx23-olinuxino.dtb
 ```
 Join zImage and imx23-olinuxino.dtb into a new file zImage_dtb:  
 ```
-$: cat arch/arm/boot/zImage arch/arm/boot/imx23-olinuxino.dtb > arch/arm/boot/zImage_dtb  
+$: cat arch/arm/boot/zImage arch/arm/boot/dts/imx23-olinuxino.dtb > arch/arm/boot/zImage_dtb  
 ```
 If you want to repeat this procedure, start with clean-up:  
 ```
