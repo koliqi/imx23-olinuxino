@@ -59,7 +59,9 @@ Directory tree is as follows:
 Switch into directory kernel and download kernel sources:  
 ```
 $: cd imx23-olinuxino/kernel  
-$: git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git  
+$: wget http://www.kernel.org/pub/linux/kernel/v3.0/linux-3.7.1.tar.bz2
+$: tar xvjf linux-3.7.1.tar.bz2
+$: mv linux-3.7.1 linux-stable  
 ```
 New directory linux-stable contain kernel sources. Switch into directory linux-stable to apply patches.  
 ```
