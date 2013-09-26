@@ -1,3 +1,7 @@
+
+Please check http://g-lab.ca for instructions to build a kernel 3.12-rc2 
+
+
 Building a kernel 3.7.1 for the olinuxino
 ===
 Latest Stable Kernel 3.7.1 include USB support for imx23-olinuxino boards. This  
