@@ -1,5 +1,5 @@
 
-Please check http://g-lab.ca for instructions to build a kernel 3.12-rc2 
+Please check http://g-lab.ca for instructions to build a kernel 3.13-rc4 
 
 
 Building a kernel 3.7.1 for the olinuxino
